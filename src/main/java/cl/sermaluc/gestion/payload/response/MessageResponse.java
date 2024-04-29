@@ -1,17 +1,17 @@
 package cl.sermaluc.gestion.payload.response;
 
 public class MessageResponse {
-  private String message;
+  private String mensaje;
 
-  public MessageResponse(String message) {
-    this.message = message;
+  public MessageResponse(String mensaje) {
+    this.mensaje = mensaje;
   }
 
-  public String getMessage() {
-    return message;
+  public String getMensaje() {
+    return mensaje;
   }
 
-  public void setMessage(String message) {
-    this.message = message;
+  public void setMensaje(String mensaje) {
+    this.mensaje = mensaje;
   }
 }
