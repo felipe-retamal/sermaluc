@@ -17,7 +17,7 @@ mvn spring-boot:run
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
-## Pruba valida
+## Prueba valida
 Ejecutar una petición POST a la URL "http://localhost:8080/user/register" con Media Type "application/json" con la siguiente estructura
 
 Example

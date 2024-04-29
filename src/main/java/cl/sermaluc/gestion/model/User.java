@@ -3,6 +3,10 @@ package cl.sermaluc.gestion.model;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +21,6 @@ uniqueConstraints = {
 		@UniqueConstraint(columnNames = "email") 
 })
 public class User {
-	
 	public User() {
 	}
 
@@ -38,7 +41,6 @@ public class User {
 
 	@NotBlank
 	@Size(max = 50)
-	@Email(regexp = ".+[@].+[\\.].+")
 	private String email;
 
 	@NotBlank

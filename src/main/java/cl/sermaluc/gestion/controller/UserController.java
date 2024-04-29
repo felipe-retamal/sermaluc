@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,6 +51,9 @@ public class UserController {
 	@Autowired
 	JwtUtils jwtUtils;
 
+	@Value("${correo.regex}")
+	private String regex;
+
 
 	private String secret = "9a4f2c8d3b7a1e6f45c8a0b3f267d8b1d4e6f3c8a9d2b5f8e3a9c8b5f6v8a3d9";
 
@@ -59,26 +63,28 @@ public class UserController {
 	@PostMapping("/register")
 	@ResponseBody
 	public ResponseEntity<?> registerUser(@Valid @RequestBody User user, Errors errors) {
-System.out.println("1");
-	if (errors.hasErrors()) {
-//        return new ResponseEntity(new ApiErrors(errors), HttpStatus.BAD_REQUEST);
-		return ResponseEntity
-				.badRequest()
-				.body(new MessageResponse(errors.getAllErrors().get(0).getDefaultMessage()));
-	}
+		if (errors.hasErrors()) {
+			//        return new ResponseEntity(new ApiErrors(errors), HttpStatus.BAD_REQUEST);
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse(errors.getAllErrors().get(0).getDefaultMessage()));
+		}
 		try {
 			if (userRepository.existsByName(user.getName())) {
 				return ResponseEntity
 						.badRequest()
 						.body(new MessageResponse("El usuario ya esta registrado"));
 			}
-			System.out.println("2");
+			if (!isValidEmailAddress(user.getEmail())) {
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("Correo mal estructurado"));
+			}
 			if (userRepository.existsByEmail(user.getEmail())) {
 				return ResponseEntity
 						.badRequest()
 						.body(new MessageResponse("El correo ya esta registrado"));
 			}
-			System.out.println("3");
 			String token = getJWTToken(user.getName());
 			user.setToken(token);
 			return ResponseEntity.ok(userRepository.save(user)) ;
@@ -106,4 +112,11 @@ System.out.println("1");
 		byte[] keyBytes = Decoders.BASE64.decode(secret);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
+
+	public boolean isValidEmailAddress(String email) {
+        String ePattern = regex;
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
+ }
 }
