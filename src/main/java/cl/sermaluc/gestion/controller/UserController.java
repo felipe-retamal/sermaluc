@@ -52,13 +52,12 @@ public class UserController {
 	JwtUtils jwtUtils;
 
 	@Value("${correo.regex}")
-	private String regex;
+	private String regex_correo;
 
+	@Value("${pwd.regex}")
+	private String regex_pwd;
 
 	private String secret = "9a4f2c8d3b7a1e6f45c8a0b3f267d8b1d4e6f3c8a9d2b5f8e3a9c8b5f6v8a3d9";
-
-	private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
-
 
 	@PostMapping("/register")
 	@ResponseBody
@@ -70,15 +69,20 @@ public class UserController {
 					.body(new MessageResponse(errors.getAllErrors().get(0).getDefaultMessage()));
 		}
 		try {
-			if (userRepository.existsByName(user.getName())) {
-				return ResponseEntity
-						.badRequest()
-						.body(new MessageResponse("El usuario ya esta registrado"));
-			}
 			if (!isValidEmailAddress(user.getEmail())) {
 				return ResponseEntity
 						.badRequest()
 						.body(new MessageResponse("Correo mal estructurado"));
+			}
+			if (!isValidPwd(user.getPassword())) {
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("Password mal estructurado"));
+			}
+			if (userRepository.existsByName(user.getName())) {
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("El usuario ya esta registrado"));
 			}
 			if (userRepository.existsByEmail(user.getEmail())) {
 				return ResponseEntity
@@ -114,9 +118,15 @@ public class UserController {
 	}
 
 	public boolean isValidEmailAddress(String email) {
-        String ePattern = regex;
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
-        java.util.regex.Matcher m = p.matcher(email);
-        return m.matches();
- }
+		String ePattern = regex_correo;
+		java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+		java.util.regex.Matcher m = p.matcher(email);
+		return m.matches();
+	}
+	public boolean isValidPwd(String pwd) {
+		String ePattern = regex_pwd;
+		java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+		java.util.regex.Matcher m = p.matcher(pwd);
+		return m.matches();
+	}
 }
