@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>cl.sermaluc</groupId>
-	<artifactId>sermaluc-test</artifactId>
+	<artifactId>sermaluc</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>gestion</name>
 	<description></description>
