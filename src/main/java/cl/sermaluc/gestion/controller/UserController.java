@@ -1,17 +1,12 @@
 package cl.sermaluc.gestion.controller;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import jakarta.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+//import com.bezkoder.spring.hibernate.onetomany.exception.ResourceNotFoundException;
+//import com.bezkoder.spring.hibernate.onetomany.model.Comment;
+
 import cl.sermaluc.gestion.model.Phone;
 import cl.sermaluc.gestion.model.User;
-import cl.sermaluc.gestion.payload.request.RegisterRequest;
 import cl.sermaluc.gestion.payload.response.MessageResponse;
+import cl.sermaluc.gestion.repository.PhoneRepository;
 import cl.sermaluc.gestion.repository.UserRepository;
-import cl.sermaluc.gestion.security.jwt.AuthTokenFilter;
 import cl.sermaluc.gestion.security.jwt.JwtUtils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -40,11 +37,11 @@ import java.security.Key;
 @RequestMapping("/user")
 public class UserController {
 	@Autowired
-	AuthenticationManager authenticationManager;
-
-	@Autowired
 	UserRepository userRepository;
 
+	@Autowired
+	PhoneRepository phoneRepository;
+	
 	@Autowired
 	PasswordEncoder encoder;
 
@@ -63,7 +60,6 @@ public class UserController {
 	@ResponseBody
 	public ResponseEntity<?> registerUser(@Valid @RequestBody User user, Errors errors) {
 		if (errors.hasErrors()) {
-			//        return new ResponseEntity(new ApiErrors(errors), HttpStatus.BAD_REQUEST);
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse(errors.getAllErrors().get(0).getDefaultMessage()));
@@ -91,7 +87,25 @@ public class UserController {
 			}
 			String token = getJWTToken(user.getName());
 			user.setToken(token);
-			return ResponseEntity.ok(userRepository.save(user)) ;
+			Phone phone = user.getPhones().get(0);
+			user.setPhones(null);
+			User userSave = userRepository.save(user);
+			phone.setUser(userSave);
+//		    Phone phone = userRepository.findById(userSave.getId()).map(user -> {
+//			userSave.getPhones().add(user.getPhones().);
+		       phoneRepository.save(phone);
+//		      }).orElseThrow(() -> new ResourceNotFoundException("Not found Tutorial with id = " + tutorialId));
+
+		    
+//			Phone phoneTemp = user.getPhones().get(0);
+//			phoneTemp.setUser(userSave);
+//			Phone phoneSave = phoneRepository.save(phoneTemp);
+//			user.getPhones().get(0).setUser(userSave)
+			
+//			user.getPhones().add(user.getPhones());
+//			Phone phoneSave = PhoneRepository.save(commentRequest);
+
+		     return ResponseEntity.ok(user) ;
 		} catch (Exception e) {
 			return ResponseEntity
 					.badRequest()

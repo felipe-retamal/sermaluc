@@ -2,7 +2,7 @@
 
 ## Download
 ```
-git clone https://github.com/spring-guides/gs-spring-boot.git
+git clone https://github.com/felipe-retamal/sermaluc.git
 ```
 ## Running as a packaged application
 ```
@@ -30,7 +30,7 @@ Example
 {
 "number": "900000000",
 "cityCode": "2",
-"contryCode": "56"
+"countryCode": "56"
 }
 ]
 }

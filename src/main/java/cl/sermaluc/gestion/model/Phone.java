@@ -1,37 +1,67 @@
 package cl.sermaluc.gestion.model;
 
-import jakarta.persistence.Basic;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "phone")
+@Table(name = "PHONE")
 public class Phone {
-	
-	public Phone() {
-	}
 
-	@Id
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id",unique=true, nullable = false)
-	private Long id;
-	@Column
+    @Column(name = "phone_id")
+    private long id;
+    
+//    @ManyToOne
+//    @JoinColumn(name="user_id", nullable=false)
+//    private User user;
+    
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
+    
+	@NotBlank
+    @Column(name = "number")
 	private String number;
-	@Column
+	@NotBlank
+    @Column(name = "cityCode")
 	private String cityCode;
-	@Column
-	private String contryCode;
+	@NotBlank
+    @Column(name = "countryCode")
+	private String countryCode;
 	
-	public Long getId() {
+    public Phone() {
+    }
+
+    public Phone(User user) {
+        this.user = user;
+    }
+
+	public long getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
+	}
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
 	}
 	public String getNumber() {
 		return number;
@@ -45,11 +75,11 @@ public class Phone {
 	public void setCityCode(String cityCode) {
 		this.cityCode = cityCode;
 	}
-	public String getContryCode() {
-		return contryCode;
+	public String getCountryCode() {
+		return countryCode;
 	}
-	public void setContryCode(String contryCode) {
-		this.contryCode = contryCode;
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 }

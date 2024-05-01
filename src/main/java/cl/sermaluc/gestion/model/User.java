@@ -1,69 +1,69 @@
 package cl.sermaluc.gestion.model;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "user", 
+@Table(name = "USER", 
 uniqueConstraints = { 
 		@UniqueConstraint(columnNames = "name"),
 		@UniqueConstraint(columnNames = "email") 
 })
 public class User {
-	public User() {
-	}
 
-	public User(String name, String email, String password, ArrayList<Phone> phone) {
+	public User() { }
+
+	public User(String name, String email, String password) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
-		this.phone = phone;
 	}
-	
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "user_id")
 	private UUID id;
 
 	@NotBlank
 	@Size(max = 20)
+	@Column(name = "name")
 	private String name;
 
 	@NotBlank
 	@Size(max = 50)
+	@Column(name = "email")
 	private String email;
 
 	@NotBlank
 	@Size(max = 120)
+	@Column(name = "password")
 	private String password;
 
 	private String token;
-	
-	@OneToMany(cascade = CascadeType.ALL)
-	private ArrayList<Phone> phone;
-	
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	  @JoinColumn(name = "user_id")
+	private ArrayList<Phone> phones;
+
 	//>> encapsulation
-	
+
 	public String getToken() {
 		return token;
 	}
 
-	public ArrayList<Phone> getPhone() {
-		return phone;
+	public ArrayList<Phone> getPhones() {
+		return phones;
 	}
 
-	public void setPhone(ArrayList<Phone> phone) {
-		this.phone = phone;
+	public void setPhones(ArrayList<Phone> phones) {
+		this.phones = phones;
 	}
 
 	public void setToken(String token) {
